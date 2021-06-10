@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "547902439263",
+    "project_id": "todo-150ab",
+    "storage_bucket": "todo-150ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547902439263:android:e34339d69d8a2c886f80ea",
+        "android_client_info": {
+          "package_name": "simi.animated_login_fb_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547902439263-2krn0q373etq8dm9m7meqiu1prf7d2b4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB32a-0bUE6I3PLH-QFItOZczEtDPe8Qkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547902439263-2krn0q373etq8dm9m7meqiu1prf7d2b4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
