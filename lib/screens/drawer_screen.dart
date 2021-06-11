@@ -24,7 +24,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Palette.lightBlue,
+                  // backgroundColor: Palette.lightBlue,
+                  backgroundColor: Colors.grey[800],
                   child: Center(
                     child: Text(
                       user.email[0],
@@ -45,7 +46,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       user.email,
                       style: TextStyle(
                           fontSize: 20,
-                          color: Colors.white70,
+                          color: Colors.white,
                           fontWeight: FontWeight.w500),
                     ),
                     SizedBox(
@@ -55,7 +56,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       "Active Status",
                       style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white54,
+                          color: Colors.white70,
                           fontWeight: FontWeight.w300),
                     ),
                   ],
@@ -71,13 +72,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   children: [
                     Icon(
                       Icons.settings,
-                      color: Colors.white38,
+                      color: Colors.white70,
                     ),
                     Text(
                       "   settings   |   ",
                       style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white54,
+                          color: Colors.white70,
                           fontWeight: FontWeight.w300),
                     ),
                   ],
@@ -90,13 +91,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     children: [
                       Icon(
                         Icons.exit_to_app,
-                        color: Colors.white38,
+                        color: Colors.white70,
                       ),
                       Text(
                         "   logout",
                         style: TextStyle(
                             fontSize: 14,
-                            color: Colors.white54,
+                            color: Colors.white70,
                             fontWeight: FontWeight.w300),
                       ),
                     ],

@@ -63,9 +63,10 @@ class MyApp extends StatelessWidget {
         } else {
           return MaterialApp(
             home: Scaffold(
-                body: Center(
-              child: LoadingIndicator(isLoading: true),
-            )),
+              body: Center(
+                child: LoadingIndicator(isLoading: true),
+              ),
+            ),
           );
         }
       },
