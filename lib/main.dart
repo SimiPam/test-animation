@@ -1,9 +1,13 @@
 import 'package:animated_login_fb_app/screens/auth/auth.dart';
+import 'package:animated_login_fb_app/screens/auth/wrapper.dart';
+import 'package:animated_login_fb_app/services/auth_service.dart';
 import 'package:animated_login_fb_app/utils/themes.dart';
 import 'package:animated_login_fb_app/widgets/sign_in_up_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import 'config/palette.dart';
 
@@ -22,34 +26,47 @@ class MyApp extends StatelessWidget {
       future: _init,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                children: [Icon(Icons.error), Text("something wemt wrong")],
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: Column(
+                  children: [Icon(Icons.error), Text("something went wrong")],
+                ),
               ),
             ),
           );
         } else if (snapshot.hasData) {
-          return MaterialApp(
-            title: 'Flutter Demo',
-            debugShowCheckedModeBanner: false,
-            // theme: myTheme,
-            theme: ThemeData(
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-              textTheme: GoogleFonts.montserratTextTheme(),
-              accentColor: Palette.darkOrange,
-              appBarTheme: const AppBarTheme(
-                brightness: Brightness.dark,
-                color: Palette.darkBlue,
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<AuthServices>.value(value: AuthServices()),
+              StreamProvider<User>.value(
+                value: AuthServices().user,
+                initialData: null,
               ),
+            ],
+            child: MaterialApp(
+              title: 'Flutter Demo',
+              debugShowCheckedModeBanner: false,
+              // theme: myTheme,
+              theme: ThemeData(
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                textTheme: GoogleFonts.montserratTextTheme(),
+                accentColor: Palette.darkOrange,
+                appBarTheme: const AppBarTheme(
+                  brightness: Brightness.dark,
+                  color: Palette.darkBlue,
+                ),
+              ),
+              home: Wrapper(),
             ),
-            home: AuthScreen(),
           );
         } else {
-          return Scaffold(
-              body: Center(
-            child: LoadingIndicator(isLoading: true),
-          ));
+          return MaterialApp(
+            home: Scaffold(
+                body: Center(
+              child: LoadingIndicator(isLoading: true),
+            )),
+          );
         }
       },
     );

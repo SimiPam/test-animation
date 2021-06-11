@@ -1,6 +1,8 @@
 import 'package:animated_login_fb_app/config/palette.dart';
 import 'package:animated_login_fb_app/screens/auth/register.dart';
+import 'package:animated_login_fb_app/screens/auth/wrapper.dart';
 import 'package:animated_login_fb_app/services/Validator.dart';
+import 'package:animated_login_fb_app/services/auth_service.dart';
 import 'package:animated_login_fb_app/utils/colors.dart';
 import 'package:animated_login_fb_app/utils/constants.dart';
 import 'package:animated_login_fb_app/utils/sizes.dart';
@@ -9,6 +11,7 @@ import 'package:animated_login_fb_app/widgets/decoration_functions.dart';
 import 'package:animated_login_fb_app/widgets/sign_in_up_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignIn extends StatefulWidget {
   final VoidCallback onRegisterClicked;
@@ -54,6 +57,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final loginProvider = Provider.of<AuthServices>(context);
     return Padding(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -118,11 +122,24 @@ class _SignInState extends State<SignIn> {
                   ),
                   SignInBar(
                     label: 'Sign in',
-                    isLoading: true,
-                    onPressed: () {
+                    isLoading: loginProvider.isLoading,
+                    onPressed: () async {
                       if (_formKey.currentState.validate()) {
                         print("Email: ${emailController.text}");
                         print("Password: ${passwordController.text}");
+
+                        await loginProvider.login(
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
+                        );
+                        loginProvider.setMessage(null);
+                        Navigator.of(context).pushReplacement(
+                          new MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return Wrapper();
+                            },
+                          ),
+                        );
                       }
                       // _buttonChange();
                       // context.signInWithEmailAndPassword();
@@ -133,6 +150,7 @@ class _SignInState extends State<SignIn> {
                     child: InkWell(
                       splashColor: Colors.white,
                       onTap: () {
+                        loginProvider.setMessage(null);
                         widget.onRegisterClicked?.call();
                         // Navigator.of(context).push(new MaterialPageRoute(
                         //     builder: (BuildContext context) {
@@ -149,6 +167,33 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  if (loginProvider.errorMessage != null)
+                    Container(
+                      // padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                      color: Colors.amberAccent,
+                      child: ListTile(
+                        title: Center(
+                          child: Text(
+                            loginProvider.errorMessage,
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        leading: Icon(
+                          Icons.error,
+                          size: 12,
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            size: 12,
+                          ),
+                          onPressed: () => loginProvider.setMessage(null),
+                        ),
+                      ),
+                    )
                 ],
               ),
             ),
