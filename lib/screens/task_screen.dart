@@ -1,6 +1,11 @@
+import 'package:animated_login_fb_app/config/palette.dart';
+import 'package:animated_login_fb_app/services/db_service.dart';
+import 'package:animated_login_fb_app/utils/colors.dart';
+import 'package:animated_login_fb_app/utils/sizes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../image_data.dart';
 
@@ -14,6 +19,7 @@ class _TaskScreenState extends State<TaskScreen> {
   double yOffset = 0;
   double scaleFactor = 1;
   bool isDrawOpen = false;
+  // TextEditingController todoTitleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,11 +78,13 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 }
 
+// ignore: must_be_immutable
 class PinterestGrid extends StatelessWidget {
-  const PinterestGrid({Key key}) : super(key: key);
-
+  TextEditingController todoTitleController = TextEditingController();
+  TextEditingController todoDescriptionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Stack(children: [
       StaggeredGridView.countBuilder(
         padding: EdgeInsets.only(left: 10, right: 10),
@@ -94,7 +102,111 @@ class PinterestGrid extends StatelessWidget {
         bottom: 10,
         left: 177,
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => SimpleDialog(
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: 20,
+                ),
+                backgroundColor: Colors.grey[800],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                title: Row(
+                  children: [
+                    Text(
+                      "Add Todo",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Spacer(),
+                    IconButton(
+                      icon: Icon(
+                        Icons.cancel,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    )
+                  ],
+                ),
+                children: [
+                  Divider(),
+                  TextFormField(
+                    controller: todoTitleController,
+                    style: TextStyle(
+                      fontSize: 18,
+                      height: 1.5,
+                      color: Colors.white,
+                    ),
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: "eg. exercise",
+                      hintStyle: TextStyle(color: Colors.white70),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                  SizedBox(height: Sizes.dimens_24),
+                  Container(
+                    padding: EdgeInsets.only(
+                        left: Sizes.dimens_20,
+                        right: Sizes.dimens_10,
+                        bottom: Sizes.dimens_30),
+                    margin: EdgeInsets.only(top: 0),
+                    decoration: BoxDecoration(
+                      // color: AppColors.descriptionColor,
+                      color: AppColors.greyColor,
+                      borderRadius: new BorderRadius.circular(18.0),
+                    ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.width,
+                      ),
+                      child: TextFormField(
+                        controller: todoDescriptionController,
+                        maxLines: null,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: Sizes.dimens_22,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "Description",
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    width: width,
+                    height: 50,
+                    child: FlatButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text("Add"),
+                      color: Palette.lightBlue,
+                      textColor: Colors.white,
+                      onPressed: () async {
+                        if (todoTitleController.text.isNotEmpty) {
+                          await DatabaseService().createNewTodo(
+                            todoTitleController.text.trim(),
+                            todoDescriptionController.text.trim(),
+                          );
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
           child: Icon(Icons.add),
         ),
       ),
@@ -103,11 +215,7 @@ class PinterestGrid extends StatelessWidget {
 }
 
 final _lightColors = [
-  // Colors.amber.shade300.withOpacity(0.2),
   Colors.lightGreen.shade300.withOpacity(0.3),
-  // Colors.lightBlue.shade300.withOpacity(0.2),
-  // Colors.orange.shade300.withOpacity(0.2),
-  // Colors.pinkAccent.shade100.withOpacity(0.2),
   Colors.tealAccent.shade100.withOpacity(0.2),
   Color(0xff092E34).withOpacity(0.3),
   Color(0xff489FB5).withOpacity(0.3),

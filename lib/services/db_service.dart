@@ -6,16 +6,28 @@ class DatabaseService {
   CollectionReference todosCollection =
       FirebaseFirestore.instance.collection("Todos");
 
-  Future createNewTodo(String title, String description) async {
+  Future createNewTodo(
+    String title,
+    String description,
+  ) async {
     return await todosCollection.add({
       "title": title,
       "isComplet": false,
       "description": description,
+      "currentDatetime": FieldValue.serverTimestamp(),
     });
   }
 
   Future completTask(uid) async {
     await todosCollection.doc(uid).update({"isComplet": true});
+  }
+
+  Future updateTask(uid, String title, String description, bool isDone) async {
+    await todosCollection.doc(uid).update({
+      "isComplet": isDone,
+      "title": title,
+      "description": description,
+    });
   }
 
   Future removeTodo(uid) async {
@@ -24,11 +36,14 @@ class DatabaseService {
 
   List<Todo> todoFromFirestore(QuerySnapshot snapshot) {
     if (snapshot != null) {
+      // return snapshot.docs.map((e) =>
+      // Todo.fromJson(e.data())).toList();
+
       return snapshot.docs.map((e) {
         return Todo(
-          isComplet: e.data()["isComplet"],
+          isComplet: e.data()['isComplet'],
           title: e.data()["title"],
-          description: e.data(),
+          description: e.data()["description"],
           uid: e.id,
         );
       }).toList();
