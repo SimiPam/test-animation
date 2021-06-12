@@ -1,5 +1,6 @@
 class Todo {
   String uid;
+  String userid;
   String title;
   String description;
   bool isComplet;
@@ -7,6 +8,7 @@ class Todo {
 
   Todo(
       {this.uid,
+      this.userid,
       this.title,
       this.description,
       this.isComplet,

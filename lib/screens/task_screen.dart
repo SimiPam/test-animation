@@ -4,10 +4,12 @@ import 'package:animated_login_fb_app/services/db_service.dart';
 import 'package:animated_login_fb_app/utils/colors.dart';
 import 'package:animated_login_fb_app/utils/sizes.dart';
 import 'package:animated_login_fb_app/widgets/sign_in_up_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../image_data.dart';
 
@@ -87,9 +89,10 @@ class TaskGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final user = Provider.of<User>(context);
     return Stack(children: [
       StreamBuilder<List<Todo>>(
-          stream: DatabaseService().listTodos(),
+          stream: DatabaseService().listTodos(user.uid),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Center(
@@ -104,7 +107,7 @@ class TaskGrid extends StatelessWidget {
               staggeredTileBuilder: (index) => StaggeredTile.fit(1),
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
-              itemBuilder: (context, index) => ImageCard(
+              itemBuilder: (context, index) => TodoCard(
                 taskData: todos[index],
                 index: index,
               ),
@@ -126,7 +129,7 @@ class TaskGrid extends StatelessWidget {
                 ),
                 backgroundColor: Colors.grey[800],
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(18),
                 ),
                 title: Row(
                   children: [
@@ -184,12 +187,15 @@ class TaskGrid extends StatelessWidget {
                         controller: todoDescriptionController,
                         maxLines: null,
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: Colors.white60,
                           fontSize: Sizes.dimens_22,
                           fontWeight: FontWeight.w400,
                         ),
                         decoration: InputDecoration(
                           hintText: "Description",
+                          hintStyle: TextStyle(
+                            color: Colors.white60,
+                          ),
                           border: InputBorder.none,
                         ),
                       ),
@@ -211,6 +217,7 @@ class TaskGrid extends StatelessWidget {
                           await DatabaseService().createNewTodo(
                             todoTitleController.text.trim(),
                             todoDescriptionController.text.trim(),
+                            user.uid,
                           );
                           Navigator.pop(context);
                         }
@@ -237,8 +244,8 @@ final _lightColors = [
   Color(0xffCC7700).withOpacity(0.3)
 ];
 
-class ImageCard extends StatelessWidget {
-  const ImageCard({this.taskData, this.index});
+class TodoCard extends StatelessWidget {
+  const TodoCard({this.taskData, this.index});
 
   final Todo taskData;
   final int index;
@@ -256,25 +263,60 @@ class ImageCard extends StatelessWidget {
         showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-                  title: new Text(
-                    "Delete",
-                    style: TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.w600),
+                  actionsPadding: EdgeInsets.all(0),
+                  contentPadding:
+                      EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 0),
+                  backgroundColor: Colors.white.withOpacity(0.7),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  content: new Text("Would you like to delete this note?"),
-                  actions: [
-                    FlatButton(
-                      child: Text('Yes'),
-                      onPressed: () async {
-                        await DatabaseService().removeTodo(taskData.uid);
-                        Navigator.pop(context);
-                      },
+                  title: Center(
+                    child: Column(
+                      children: [
+                        new Text(
+                          "Delete".toUpperCase(),
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Divider(
+                          color: Colors.grey[500],
+                        ),
+                      ],
                     ),
-                    FlatButton(
-                      child: Text('No'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+                  ),
+                  content: new Text(
+                    "Would you like to delete this note?",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  actions: [
+                    Center(
+                      child: TextButton(
+                        child: Text(
+                          'Yes',
+                          style: TextStyle(
+                              color: Palette.lightBlue,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () async {
+                          await DatabaseService().removeTodo(taskData.uid);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    Center(
+                      child: TextButton(
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                              color: Palette.lightBlue,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     )
                   ],
                 ));
@@ -441,67 +483,3 @@ class ImageCard extends StatelessWidget {
     );
   }
 }
-
-// constraints: BoxConstraints(minHeight: minHeight),
-
-// final minHeight = getMinHeight(index);
-// double getMinHeight(int index) {
-//   switch (index % 4) {
-//     case 0:
-//       return 100;
-//     case 1:
-//       return 150;
-//     case 2:
-//       return 150;
-//     case 3:
-//       return 100;
-//     default:
-//       return 100;
-//   }
-// }
-// @override
-// Widget build(BuildContext context) {
-//   return ClipRRect(
-//     borderRadius: BorderRadius.circular(16.0),
-//     child: Image.network(imageData.imageUrl, fit: BoxFit.cover),
-//   );
-// }
-
-// Row(
-// children: [
-// Checkbox(
-// materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-// value: taskData.isComplet,
-// onChanged: (val) {},
-// ),
-// // SizedBox(
-// //   width: 1,
-// // ),
-// IconButton(
-// icon: Icon(
-// Icons.delete,
-// color: Colors.black54,
-// ),
-// onPressed: () async {
-// showDialog(
-// context: context,
-// builder: (_) => new CupertinoAlertDialog(
-// title: new Text("Delete"),
-// content: new Text("Are you sure?"),
-// actions: <Widget>[
-// FlatButton(
-// child: Text('Yes'),
-// onPressed: () {},
-// ),
-// FlatButton(
-// child: Text('No'),
-// onPressed: () {
-// Navigator.of(context).pop();
-// },
-// )
-// ],
-// ));
-// },
-// ),
-// ],
-// ),

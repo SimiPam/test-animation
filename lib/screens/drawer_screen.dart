@@ -27,13 +27,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   // backgroundColor: Palette.lightBlue,
                   backgroundColor: Colors.grey[800],
                   child: Center(
-                    child: Text(
-                      user.email[0],
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Palette.darkOrange,
-                          fontWeight: FontWeight.w900),
+                    child: Image(
+                      image: NetworkImage(
+                          'https://picsum.photos/seed/image014/500/800'),
                     ),
+
+                    // Text(
+                    //   user.email[0],
+                    //   style: TextStyle(
+                    //       fontSize: 20,
+                    //       color: Palette.darkOrange,
+                    //       fontWeight: FontWeight.w900),
+                    // ),
                   ),
                 ),
                 SizedBox(

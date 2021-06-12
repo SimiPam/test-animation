@@ -1,5 +1,6 @@
 import 'package:animated_login_fb_app/model/todo_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DatabaseService {
@@ -9,9 +10,11 @@ class DatabaseService {
   Future createNewTodo(
     String title,
     String description,
+    String userid,
   ) async {
     return await todosCollection.add({
       "title": title,
+      "userid": userid,
       "isComplet": false,
       "description": description,
       "currentDatetime": FieldValue.serverTimestamp(),
@@ -44,6 +47,7 @@ class DatabaseService {
           isComplet: e.data()['isComplet'],
           title: e.data()["title"],
           description: e.data()["description"],
+          userid: e.data()["userid"],
           uid: e.id,
         );
       }).toList();
@@ -52,7 +56,10 @@ class DatabaseService {
     }
   }
 
-  Stream<List<Todo>> listTodos() {
-    return todosCollection.snapshots().map(todoFromFirestore);
+  Stream<List<Todo>> listTodos(userid) {
+    return todosCollection
+        .where('userid', isEqualTo: userid)
+        .snapshots()
+        .map(todoFromFirestore);
   }
 }
