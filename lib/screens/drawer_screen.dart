@@ -30,6 +30,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     child: Image(
                       image: NetworkImage(
                           'https://picsum.photos/seed/image014/500/800'),
+                      fit: BoxFit.cover,
                     ),
 
                     // Text(
